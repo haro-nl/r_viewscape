@@ -121,3 +121,16 @@ patch_p <- function(m, patchpoly){
   samples <- sf::st_coordinates(samples)[,-3]
   return(list(Nump, MSI, ED, PS, PD, samples))
 }
+
+get_samples <- function(m){
+  ptc_lines <- m %>%
+    terra::as.polygons() %>%
+    terra::as.lines() %>%
+    sf::st_as_sf()
+    samples <- sf::st_sample(sf::st_cast(ptc_lines$geometry,
+                                       "MULTILINESTRING"),
+                           num_pt)
+  samples <- sf::st_coordinates(samples)[,-3]
+
+
+}

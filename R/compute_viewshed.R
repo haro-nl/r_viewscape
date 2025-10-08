@@ -67,11 +67,23 @@
 #' # Load a viewpoint
 #' test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", package = "viewscape"))
 #' # load dsm raster
-#' dsm <- terra::rast(system.file("test_dsm.tif", package ="viewscape"))
+#' test_dsm <- terra::rast(system.file("test_dsm.tif", package ="viewscape"))
+#'
+#' test_dtm <- terra::rast(system.file("test_dtm.tif",
+#'                                     package ="viewscape"))
 #' #Compute viewshed
-#' output <- viewscape::compute_viewshed(dsm = dsm,
-#'                                       viewpoints = test_viewpoint,
-#'                                       offset_viewpoint = 6, r = 1600)
+test_viewpoint <- sf::read_sf("c:\\apps\\proj_code\\r_viewscape\\inst\\test_viewpoint.shp")
+output <- viewscape::compute_viewshed(dsm = dsm,
+                                       viewpoints = test_viewpoint,
+                                       offset_viewpoint = 6, r = 2000,
+                                       raster=FALSE)
+writeRaster(output, 'c:\\apps\\proj_code\\r_viewscape\\inst\\test_outputs\\test02.tif', overwrite=TRUE)
+
+#' # calculate metrics given the viewshed, canopy, and building footprints
+test_metrics <- viewscape::calculate_viewmetrics(output,
+                                                test_dsm,
+                                                test_dtm)
+
 
 compute_viewshed <- function(dsm,
                              viewpoints,

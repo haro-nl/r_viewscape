@@ -99,27 +99,36 @@ calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = list()) {
     dsm <- terra::project(dtm, y=terra::crs(viewshed@crs))
   }
   output <- list()
+  ## visiblepoints: tbale with x y cols
   visiblepoints <- filter_invisible(viewshed, FALSE)
-  # viewshed raster
+  # viewshed raster, ie spatVector with point geometry
   m <- terra::vect(sp::SpatialPoints(visiblepoints))
   terra::crs(m) <- viewshed@crs
+  # Mask raster equals visible viewshed
   mask_ <- terra::mask(filter_invisible(viewshed, TRUE), m)
   # get subdsm/dtm
   subdsm <- terra::crop(dsm, terra::ext(mask_))
   subdtm <- terra::crop(dtm, terra::ext(mask_))
   submodel <- subdsm - subdtm
-  ttops <- ForestTools::vwf(CHM = submodel,
-                            winFun = function(x){x * 0.05 + 0.6},
-                            minHeight = minHeight)
-  crowns <- ForestTools::mcws(treetops = ttops,
-                              CHM = submodel,
+
+  # Try to extract crowns.
+  patch_paras <- tryCatch({
+    ttops <- ForestTools::vwf(CHM = submodel,
+                              winFun = function(x){x * 0.05 + 0.6},
                               minHeight = minHeight)
-  crowns <- terra::patches(crowns, directions=4)
-  crowns <- terra::as.polygons(crowns)
-  # viewshed patch parameters
-  patch_paras <- patch_p(mask_, crowns)
-  x <- patch_paras[[6]][,1]
-  y <- patch_paras[[6]][,2]
+    crowns <- ForestTools::mcws(treetops = ttops,
+                                CHM = submodel,
+                                minHeight = minHeight)
+    crowns <- terra::patches(crowns, directions=4)
+    crowns <- terra::as.polygons(crowns)
+    # viewshed patch parameters
+    patch_paras <- patch_p(mask_, crowns)
+      }, error=function(e){
+    patch_paras <- list(0, 0, 0, 0, 0, 0)
+  }
+  )
+  x <- patch_paras[[6]][,1]  # sequence of x-coordinates
+  y <- patch_paras[[6]][,2]  # sequence of y-coordinates
   pointnumber <- length(visiblepoints[,1])
   resolution <- viewshed@resolution[1]
   # Number of patches
@@ -134,9 +143,9 @@ calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = list()) {
   extent <- pointnumber * resolution^2
   output[[length(output)+1]] <- extent
   # depth - Furthest visible distance given the viewscape
-  depths <- get_depths(viewshed@viewpoint[1],
-                       viewshed@viewpoint[2],
-                       x,
+  depths <- get_depths(viewshed@viewpoint[1],  # Viewpoint X-coordinate
+                       viewshed@viewpoint[2],  # Viewpoint y-coordinate
+                       x,  # x-coordinates of
                        y,
                        length(x))
   depths <- depths[!is.na(depths)]
