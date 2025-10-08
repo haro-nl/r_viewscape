@@ -77,6 +77,29 @@
 #'
 #' @export
 
+generate_circle_points <- function(center, distance) {
+  # center: numeric vector c(x, y)
+  # distance: radius (in same units as center)
+
+  if (length(center) != 2) {
+    stop("Center must be a numeric vector of length 2: c(x, y)")
+  }
+
+  # Generate 36 angles (every 10 degrees)
+  angles <- seq(0, 350, by = 10)
+
+  # Convert to radians
+  rad <- angles * pi / 180
+
+  # Compute x/y coordinates
+  x <- center[1] + distance * cos(rad)
+  y <- center[2] + distance * sin(rad)
+
+  # Return as a data frame of coordinates
+  data.frame(id = 1:36, x = x, y = y)
+}
+
+
 calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = list()) {
   if (missing(viewshed)) {
     stop("Viewshed object is missing")
@@ -112,7 +135,7 @@ calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = list()) {
   submodel <- subdsm - subdtm
 
   # Try to extract crowns.
-  patch_paras <- tryCatch({
+  results <- tryCatch({
     ttops <- ForestTools::vwf(CHM = submodel,
                               winFun = function(x){x * 0.05 + 0.6},
                               minHeight = minHeight)
@@ -123,12 +146,21 @@ calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = list()) {
     crowns <- terra::as.polygons(crowns)
     # viewshed patch parameters
     patch_paras <- patch_p(mask_, crowns)
-      }, error=function(e){
-    patch_paras <- list(0, 0, 0, 0, 0, 0)
-  }
+    list(patch_paras=patch_paras,
+         x=patch_paras[[6]][,1],
+         y=patch_paras[[6]][,2])
+    }, error=function(e){
+                outer_points <- generate_circle_points(c(viewshed@viewpoint[1],
+                                  viewshed@viewpoint[2]),
+                                distance=max(viewshed@extent[3]-viewshed@extent[1],
+                                             viewshed@extent[4]-viewshed@extent[2])/2)
+    list(patch_paras=list(0, 0, 0, 0, 0, 0), x=outer_points$x, y=outer_points$y)
+    }
   )
-  x <- patch_paras[[6]][,1]  # sequence of x-coordinates
-  y <- patch_paras[[6]][,2]  # sequence of y-coordinates
+  patch_paras <- results$patch_paras
+  x <- results$x
+  y <- results$y
+
   pointnumber <- length(visiblepoints[,1])
   resolution <- viewshed@resolution[1]
   # Number of patches
