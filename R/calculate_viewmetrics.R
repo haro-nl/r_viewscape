@@ -66,13 +66,15 @@
 #' # Compute viewshed
 #' output <- viewscape::compute_viewshed(dsm = test_dsm,
 #'                                       viewpoints = test_viewpoint,
-#'                                       offset_viewpoint = 6, r = 1600)
+#'                                       offset_viewpoint = 6, r = 1600,
+#'                                       raster=FALSE)
 #'
 #' # calculate metrics given the viewshed, canopy, and building footprints
-#' test_metrics <- viewscape::calculate_viewmetrics(output,
-#'                                                  test_dsm,
-#'                                                  test_dtm,
-#'                                                  list(test_canopy, test_building))
+#' test_metrics <- calculate_viewmetrics(viewshed=output,
+#'                                                  dsm=test_dsm,
+#'                                                  dtm=test_dtm,
+#'                                                  horizontal_raster=TRUE
+#'                                                  )
 #' }
 #'
 #' @export
@@ -100,7 +102,8 @@ generate_circle_points <- function(center, distance) {
 }
 
 
-calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = list()) {
+calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = list(),
+                                  horizontal_raster=FALSE) {
   if (missing(viewshed)) {
     stop("Viewshed object is missing")
   }
@@ -150,11 +153,15 @@ calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = list()) {
          x=patch_paras[[6]][,1],
          y=patch_paras[[6]][,2])
     }, error=function(e){
-                outer_points <- generate_circle_points(c(viewshed@viewpoint[1],
+      print(e)
+      print('Defaulting to 0 crowns')
+      outer_points <- generate_circle_points(c(viewshed@viewpoint[1],
                                   viewshed@viewpoint[2]),
                                 distance=max(viewshed@extent[3]-viewshed@extent[1],
                                              viewshed@extent[4]-viewshed@extent[2])/2)
-    list(patch_paras=list(0, 0, 0, 0, 0, 0), x=outer_points$x, y=outer_points$y)
+    list(patch_paras=list(0, 0, 0, 0, 0, 0),
+         x=outer_points$x,
+         y=outer_points$y)
     }
   )
   patch_paras <- results$patch_paras
@@ -203,6 +210,27 @@ calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = list()) {
   names(output) <- c("Nump", "MSI", "ED", "PS", "PD",
                      "extent", "depth", "vdepth",
                      "horizontal", "relief")
+
+  # horizontal visible area as SpatRaster if requested.
+  if (horizontal_raster){
+
+    mtrx <- ifelse(as.matrix((submodel<= error), wide=TRUE) &
+                             (viewshed@visible == 1),
+                   1, 0)
+    horizontal_vis_rast <- terra::rast(
+      nrows=nrow(dsm),
+      ncols=ncol(dsm),
+      nlyrs=1,
+      extent=ext(dsm),
+      vals=mtrx,
+      crs=crs(dsm)
+    )
+    output[[length(output)+1]] <- horizontal_vis_rast
+    names(output) <- c("Nump", "MSI", "ED", "PS", "PD",
+                       "extent", "depth", "vdepth",
+                       "horizontal", "relief", "horizontal_visible")
+  }
+
   # skyline - Variation of (Standard deviation) of the vertical viewscape
   # (visible canopy and buildings)
   if (length(masks) == 2) {
