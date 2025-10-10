@@ -114,7 +114,7 @@ calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = list(),
   if (units == "ft") {
     error <- 1.6
     minHeight <- 10
-  } else if (units == "m") {
+  } else if (units %in% c("m", "metre", "meter")){
     error <- 0.5
     minHeight <- 3
   }
