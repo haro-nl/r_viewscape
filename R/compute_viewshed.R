@@ -53,7 +53,7 @@
 #' Generating viewsheds without using sightlines.
 #' Photogrammetric engineering and remote sensing, 66(1), 87-90.
 #'
-#' @useDynLib viewscape
+#' @useDynLib r_viewscape
 #' @import pbmcapply
 #' @importFrom Rcpp sourceCpp
 #' @importFrom Rcpp evalCpp
@@ -65,12 +65,12 @@
 #'
 #' @examples
 #' # Load a viewpoint
-#' test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", package = "viewscape"))
+#' test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", package = "r_viewscape"))
 #' # load dsm raster
-#' dsm <- terra::rast(system.file("test_dsm.tif", package ="viewscape"))
+#' dsm <- terra::rast(system.file("test_dsm.tif", package ="r_viewscape"))
 #'
 #' test_dtm <- terra::rast(system.file("test_dtm.tif",
-#'                                     package ="viewscape"))
+#'                                     package ="r_viewscape"))
 #' #Compute viewshed
 
 

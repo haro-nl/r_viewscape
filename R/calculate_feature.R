@@ -17,20 +17,20 @@
 #' @export
 #'
 #' @examples
-#' library(viewscape)
+#' library(r_viewscape)
 #' # Load a viewpoint
-#' test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", package = "viewscape"))
+#' test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", package = "r_viewscape"))
 #' # load dsm raster
-#' dsm <- terra::rast(system.file("test_dsm.tif", package ="viewscape"))
+#' dsm <- terra::rast(system.file("test_dsm.tif", package ="r_viewscape"))
 #' #Compute viewshed
-#' viewshed <- viewscape::compute_viewshed(dsm = dsm,
+#' viewshed <- r_viewscape::compute_viewshed(dsm = dsm,
 #'                                         viewpoints = test_viewpoint,
 #'                                         offset_viewpoint = 6)
 #' # load canopy raster
 #' test_canopy <- terra::rast(system.file("test_canopy.tif",
-#'                                        package ="viewscape"))
+#'                                        package ="r_viewscape"))
 #' # calculate the percentage of canopy coverage
-#' test_canopy_proportion <- viewscape::calculate_feature(viewshed = viewshed,
+#' test_canopy_proportion <- r_viewscape::calculate_feature(viewshed = viewshed,
 #'                                                        feature = test_canopy,
 #'                                                        type = 2,
 #'                                                        exclude_value = 0)

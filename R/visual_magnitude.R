@@ -13,15 +13,15 @@
 #' @examples
 #' \donttest{
 #' # Load a viewpoint
-#' test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", package = "viewscape"))
+#' test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", package = "r_viewscape"))
 #' # load dsm raster
-#' dsm <- terra::rast(system.file("test_dsm.tif", package ="viewscape"))
+#' dsm <- terra::rast(system.file("test_dsm.tif", package ="r_viewscape"))
 #' # Compute viewshed
-#' viewshed <- viewscape::compute_viewshed(dsm = dsm,
+#' viewshed <- r_viewscape::compute_viewshed(dsm = dsm,
 #'                                         viewpoints = test_viewpoint,
 #'                                         offset_viewpoint = 6)
 #' # Compute visual magnitude
-#' vm <- viewscape::visual_magnitude(viewshed, dsm)
+#' vm <- r_viewscape::visual_magnitude(viewshed, dsm)
 #' }
 #'
 #' @importFrom terra terrain
