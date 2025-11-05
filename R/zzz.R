@@ -18,6 +18,6 @@
 
 .onUnload <- function(libpath)
 {
-  library.dynam.unload("r_viewscape", libpath)
+  library.dynam.unload("viewscape", libpath)
 }
 

@@ -23,15 +23,15 @@
 #' @return viewshed object
 #' @examples
 #' # Load a viewpoint
-#' test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", package = "r_viewscape"))
+#' test_viewpoint <- sf::read_sf(system.file("test_viewpoint.shp", package = "viewscape"))
 #' # load dsm raster
-#' dsm <- terra::rast(system.file("test_dsm.tif", package ="r_viewscape"))
+#' dsm <- terra::rast(system.file("test_dsm.tif", package ="viewscape"))
 #' # Compute viewshed
-#' viewshed <- r_viewscape::compute_viewshed(dsm,
+#' viewshed <- viewscape::compute_viewshed(dsm,
 #'                                         viewpoints = test_viewpoint,
 #'                                         offset_viewpoint = 6)
 #' # subset viewshed using the field of view
-#' out <- r_viewscape::fov_mask(viewshed, c(40,160))
+#' out <- viewscape::fov_mask(viewshed, c(40,160))
 #'
 #' @seealso [compute_viewshed()]
 #' @export

@@ -2,22 +2,22 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 VM <- function(viewshed, dsm, slp, asp, viewpt, h, resolution) {
-    .Call('_viewscape_VM', PACKAGE = 'r_viewscape', viewshed, dsm, slp, asp, viewpt, h, resolution)
+    .Call('_viewscape_VM', PACKAGE = 'viewscape', viewshed, dsm, slp, asp, viewpt, h, resolution)
 }
 
 get_depths <- function(px, py, x, y, num) {
-    .Call('_viewscape_get_depths', PACKAGE = 'r_viewscape', px, py, x, y, num)
+    .Call('_viewscape_get_depths', PACKAGE = 'viewscape', px, py, x, y, num)
 }
 
 sectorMask <- function(viewshed, viewpt, fov) {
-    .Call('_viewscape_sectorMask', PACKAGE = 'r_viewscape', viewshed, viewpt, fov)
+    .Call('_viewscape_sectorMask', PACKAGE = 'viewscape', viewshed, viewpt, fov)
 }
 
 reference <- function(viewpoint, dsm, h, max_dis, refraction_factor) {
-    .Call('_viewscape_reference', PACKAGE = 'r_viewscape', viewpoint, dsm, h, max_dis, refraction_factor)
+    .Call('_viewscape_reference', PACKAGE = 'viewscape', viewpoint, dsm, h, max_dis, refraction_factor)
 }
 
 LOS <- function(viewpoint, dsm, h, max_dis, refraction_factor) {
-    .Call('_viewscape_LOS', PACKAGE = 'r_viewscape', viewpoint, dsm, h, max_dis, refraction_factor)
+    .Call('_viewscape_LOS', PACKAGE = 'viewscape', viewpoint, dsm, h, max_dis, refraction_factor)
 }
 
