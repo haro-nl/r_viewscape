@@ -206,9 +206,6 @@ calculate_viewmetrics <- function(viewshed, dsm, dtm, masks = list(),
   # horizontal
   output[[length(output)+1]] <- length(z[,3]) * resolution^2
   
-  if (identical(patch_paras, list(0,0,0,0,0,0)))
-    output[[length(output)]] <- extent
-  
   # relief
   output[[length(output)+1]] <- sd(z[,1])
   names(output) <- c("Nump", "MSI", "ED", "PS", "PD",
